@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 ###########################################################################
 #                                                                         #
@@ -38,8 +38,11 @@ for more option call program with flag C{--help}
 from __future__ import unicode_literals
 from __future__ import print_function
 import logging
+import os
 from argparse import ArgumentParser
 from templateme import get_version
+from templateme.manager import TMPManager
+from templateme.abstract import Template
 
 
 def __option_args(argv=None):
@@ -50,9 +53,8 @@ def __option_args(argv=None):
     @type argv: list
     @return: parsed arguments
     """
-    parser = ArgumentParser(description="Save one or more urls from "
-                                        "Youtube to file.",
-                            prog='ytdown')
+    parser = ArgumentParser(description="Create new project from template",
+                            prog='templateme')
     parser.add_argument("-v", "--version", action='version',
                         version='%(prog)s {}'.format(get_version()))
     parser.add_argument("-d", "--log", dest="logLevel",
@@ -60,13 +62,17 @@ def __option_args(argv=None):
                                  'ERROR', 'CRITICAL'],
                         help="Set the logging level")
     parser.add_argument("-o", "--output", metavar="FILE",
-                        dest="output", default="",
+                        dest="output", default=os.path.join(os.getcwd(), "project"),
                         help="Destination folder.")
+    parser.add_argument("-p", "--project-name", metavar="NAME",
+                        dest="project_name", default="Project",
+                        help="Project name")
     parser.add_argument("-l", "--list", action="store_true",
                         dest="list", default=False,
                         help="List available templates")
     parser.add_argument("-t", "--temp", metavar="TEMPLATE",
-                        dest="template", default="")
+                        dest="template", default="",
+                        help="Template name")
 
 
     return parser.parse_args(argv)
@@ -82,6 +88,22 @@ def main(argv=None):
     logging.basicConfig(format='%(asctime)s - %(name)s - '
                                '%(levelname)s - %(message)s',
                         level=options.logLevel)
+    manager = TMPManager(options.project_name)
+    if options.list:
+        templates = manager.get_all_templates()
+        for temp in templates:
+            print(temp)
+        exit(0)
+    elif options.template == "":
+        print("You should define template's name\nSee --help for more information")
+        exit(1)
+
+    template = manager.get_template(options.template)
+    assert(isinstance(template, Template))
+    if template is None:
+        print("There are not template name: ", options.template)
+        exit(1)
+    template.save_all(options.output, options.project_name)
 
 
 if __name__ == "__main__":

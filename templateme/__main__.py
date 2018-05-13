@@ -19,18 +19,10 @@
 #                                                                         #
 ###########################################################################
 """
-CommandLine interface for test.
 
-For checking tests call::
-
-    python -m templateme.tests
 """
 
-# pylint: disable=W0611
-from __future__ import unicode_literals
-import unittest
-from templateme.tests import TestTemplateMeModule
-
+from templateme.console import main
 
 if __name__ == "__main__":
-    unittest.main()
+    main()

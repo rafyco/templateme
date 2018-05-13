@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 ###########################################################################
 #                                                                         #
@@ -19,18 +19,44 @@
 #                                                                         #
 ###########################################################################
 """
-CommandLine interface for test.
 
-For checking tests call::
-
-    python -m templateme.tests
 """
+from templateme.path import PathSource
+import datetime
 
-# pylint: disable=W0611
-from __future__ import unicode_literals
-import unittest
-from templateme.tests import TestTemplateMeModule
+class TMPManagerError(Exception):
+    pass
 
+class TMPManager(object):
+    def __init__(self, name="Project"):
+        self.plugins = []
+        self.plugins.append(PathSource(manager=self))
+        
+        self.email = "annonymous@admin.org"
+        self.author = "Annonymous"
+        self.name = name
+    def get_all_templates(self):
+        result = []
+        for plug in self.plugins:
+            for temp in plug.get_all_templates():
+                result.append(temp)
+        return result
+    def get_template(self, name):
+        template = None
+        for plug in self.plugins:
+            template = plug.get_template(name)
+            if template is not None:
+                break
+        return template
+    def render_template_txt(self, txt, template):
+        result = txt
+        changes = {
+            'EMAIL': self.email,
+            'AUTHOR': self.author,
+            'YEAR': datetime.datetime.now().strftime("%Y"),
+            'NAME': self.name
+            }
+        for key in changes:
+            result = result.replace("%{}%".format(key), changes[key])
+        return result
 
-if __name__ == "__main__":
-    unittest.main()
