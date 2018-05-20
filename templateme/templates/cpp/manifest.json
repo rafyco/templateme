@@ -1,0 +1,5 @@
+{
+	"short-description": "C++ template",
+	"description": "C++ template",
+    "include" : "cpp-class"
+}

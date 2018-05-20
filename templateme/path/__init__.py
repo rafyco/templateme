@@ -21,17 +21,16 @@
 """
 
 """
-from templateme.abstract import TMPSource
-from templateme.abstract import Template
-from templateme.abstract import TMPElement
+from templateme.manifest import Manifest
+from templateme.manifest import ManifestError
 import templateme
+import templateme.abstract
 import logging
 import os
 
-class PathElement(TMPElement):
+class PathElement(templateme.abstract.TMPElement):
     def __init__(self, path, localization, template):
-        txt = ""
-        TMPElement.__init__(self, path, template)
+        templateme.abstract.TMPElement.__init__(self, path, template)
         self.localization = localization
         self._load_txt = ""
     def load_txt(self):
@@ -42,34 +41,37 @@ class PathElement(TMPElement):
         return self._load_txt
 
 
-class PathTemplate(Template):
+class PathTemplate(templateme.abstract.Template):
     def __init__(self, path, name, manager):
-        Template.__init__(self, name, manager)
+        manifest = None
+        try:
+            manifest = Manifest.create_from_file(os.path.join(path, name, "manifest.json"), self)
+        except ManifestError:
+            pass
+        templateme.abstract.Template.__init__(self, name, manager, manifest)
         self._path = os.path.join(path, name)
-    def get_elements(self):
+    def _get_elements(self):
         elements = []
         for root, dirs, files in os.walk(self._path):
             for name in files:
                 full_path = os.path.join(root, name)
+                if self._is_ignored(full_path):
+                    continue
                 path_element = os.path.relpath(full_path, self._path)
                 element = PathElement(path_element, full_path, self)
                 elements.append(element)
         return elements
 
 
-class PathSource(TMPSource):
+class PathSource(templateme.abstract.TMPSource):
     def __init__(self, manager, path = os.path.join(templateme.__path__[0], "templates")):
-        TMPSource.__init__(self, manager)
+        templateme.abstract.TMPSource.__init__(self, manager)
         self._path = path
-        self._templates = None
     def get_all_templates(self):
-        if self._templates is None:
-            self._templates = []
-            logging.debug(self._path)
-            temp = os.listdir(self._path)
-            for t in temp:
-                self._templates.append(PathTemplate(self._path, t, self.manager))
-        return self._templates
-
-
+        templates = []
+        logging.debug(self._path)
+        temp = os.listdir(self._path)
+        for t in temp:
+            templates.append(PathTemplate(self._path, t, self.manager))
+        return templates
 

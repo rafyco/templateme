@@ -1,0 +1,9 @@
+*.pyc
+templateme_docs
+build/
+dist/
+templateme.egg-info
+.ropeproject/
+*.swo
+*.swp
+*.swn

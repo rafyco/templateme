@@ -21,43 +21,47 @@
 """
 
 """
-from templateme.path import PathSource
-import datetime
 
-class TMPManagerError(Exception):
+import os
+import json
+
+class ManifestError(Exception):
     pass
 
-class TMPManager(object):
-    def __init__(self, name="Project"):
-        self.plugins = []
-        self.plugins.append(PathSource(manager=self))
 
-        self.email = "annonymous@admin.org"
-        self.author = "Annonymous"
-        self.name = name
-    def get_all_templates(self):
-        result = []
-        for plug in self.plugins:
-            for temp in plug.get_all_templates():
-                result.append(temp)
-        return result
-    def get_template(self, name):
-        template = None
-        for plug in self.plugins:
-            template = plug.get_template(name)
-            if template is not None:
-                break
-        return template
-    def render_template_txt(self, txt, template):
-        result = txt
-        changes = {
-            'EMAIL': self.email,
-            'AUTHOR': self.author,
-            'YEAR': datetime.datetime.now().strftime("%Y"),
-            'NAME': self.name
-            }
-        changes.update(template.args)
-        for key in changes:
-            result = result.replace("%{}%".format(key.upper()), changes[key])
-        return result
+class Manifest(object):
+    def _read_argument(self, key, default=""):
+        if key in self.data:
+            return self.data[key]
+        else:
+            return default
+    def __init__(self, data, template):
+        self.data = data
+
+        self.short_description = self._read_argument("short-description", "No description")
+        self.description = self._read_argument("description", "No description")
+        self.include = self._read_argument("include", [])
+        if not isinstance(self.include, list):
+            self.include = [self.include]
+
+        self.args = {}
+        args = self._read_argument("args", {})
+        self.add_arguments(args)
+    def add_arguments(self, args):
+        if isinstance(args, list):
+            for key in args:
+                self.args[key] = None
+        elif isinstance(args, dict):
+            for key, value in args.items():
+                self.args[key] = value
+        else:
+            raise AttributeError()
+
+    @staticmethod
+    def create_from_file(path, template):
+        if not os.path.isfile(path):
+            raise ManifestError("Manifest not exist")
+        with open(path) as data_file:
+            data = json.load(data_file)
+        return Manifest(data, template)
 
