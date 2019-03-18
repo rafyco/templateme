@@ -1,23 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-###########################################################################
-#                                                                         #
-#  Copyright (C) 2018  Rafal Kobel <rafalkobel@rafyco.pl>                 #
-#                                                                         #
-#  This program is free software: you can redistribute it and/or modify   #
-#  it under the terms of the GNU General Public License as published by   #
-#  the Free Software Foundation, either version 3 of the License, or      #
-#  (at your option) any later version.                                    #
-#                                                                         #
-#  This program is distributed in the hope that it will be useful,        #
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of         #
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the           #
-#  GNU General Public License for more details.                           #
-#                                                                         #
-#  You should have received a copy of the GNU General Public License      #
-#  along with this program.  If not, see <http://www.gnu.org/licenses/>.  #
-#                                                                         #
-###########################################################################
 """
 Create new project in defined place..
 
@@ -38,7 +19,6 @@ for more option call program with flag C{--help}
 from __future__ import unicode_literals
 from __future__ import print_function
 import logging
-import os
 from argparse import ArgumentParser
 from templateme import get_version
 from templateme.manager import TMPManager
@@ -81,15 +61,16 @@ def __option_args(argv=None):
 
 
 def set_template_arguments(template):
+    """ Set argument for template. """
     for key, value in template.args.items():
         default_str = ""
         if value is not None and value != "":
             default_str = " (default: {})".format(value)
         input_str = input("Write ['{}'] value{}: ".format(key, default_str))
-        if input_str is "":
+        if input_str == "":
             input_str = value
         template.set_argument(key, input_str)
-        
+
 
 def main(argv=None):
     """
@@ -116,7 +97,7 @@ def main(argv=None):
         exit(1)
 
     template = manager.get_template(options.template)
-    assert(isinstance(template, Template))
+    assert isinstance(template, Template)
     if template is None:
         print("There are not template name: ", options.template)
         exit(1)
