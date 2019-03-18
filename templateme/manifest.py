@@ -9,10 +9,9 @@ import json
 
 class ManifestError(Exception):
     """ Manifest error. """
-    pass
 
 
-class Manifest(object):
+class Manifest:
     """ Manifest parsing class. """
 
     def _read_argument(self, key, default=""):

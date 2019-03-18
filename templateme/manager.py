@@ -8,10 +8,9 @@ from templateme.container.path import PathSource
 
 class TMPManagerError(Exception):
     """ Manager error. """
-    pass
 
 
-class TMPManager(object):
+class TMPManager:
     """ Template manager. """
 
     def __init__(self, name="Project"):

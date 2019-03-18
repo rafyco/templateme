@@ -10,7 +10,6 @@ import re
 
 class TemplateError(Exception):
     """ Class describe template error. """
-    pass
 
 
 class TMPElement(abc.ABC):
