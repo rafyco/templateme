@@ -2,6 +2,7 @@
 templateme_docs
 build/
 dist/
+venv/
 templateme.egg-info
 .ropeproject/
 *.swo
