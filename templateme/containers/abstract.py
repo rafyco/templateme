@@ -51,7 +51,7 @@ class Template(abc.ABC):
     """ Class which describe template. """
     def __init__(self, name, manager, manifest=None):
         self.manager = manager
-        self.name = name
+        self._name = name
 
         self._ignored = ['manifest.json', '*.swp']
         self._include_templates = None
@@ -87,7 +87,7 @@ class Template(abc.ABC):
         return False
 
     def __str__(self):
-        return self.name
+        return self._name
 
     @classmethod
     def _get_elements(cls):
@@ -97,7 +97,7 @@ class Template(abc.ABC):
     @property
     def name(self):
         """ Name of template. """
-        return self.name
+        return self._name
 
     @property
     def include_templates(self):

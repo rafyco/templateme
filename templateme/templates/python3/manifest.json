@@ -1,0 +1,9 @@
+{
+	"short-description": "C++ template",
+	"description": "C++ template",
+    "include" : [ "python3-tests", "python3-travis" ],
+	"args": {
+		"module": null,
+		"github": null
+	}
+}

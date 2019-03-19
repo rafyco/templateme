@@ -3,7 +3,7 @@
 Module of template's manager.
 """
 import datetime
-from templateme.container.path import PathSource
+from templateme.containers.path import PathSource
 
 
 class TMPManagerError(Exception):

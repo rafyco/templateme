@@ -1,0 +1,7 @@
+{
+	"short-description": "Readme template",
+	"description": "Readme template for your new project. It contains simple description of installation and features of your project.",
+	"args": {
+		"program": null
+	}
+}

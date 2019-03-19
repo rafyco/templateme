@@ -1,0 +1,7 @@
+{
+	"short-description": "Travis configuration",
+	"description": "Simple configuration for python project to travis service.",
+	"args": {
+		"module": null
+	}
+}

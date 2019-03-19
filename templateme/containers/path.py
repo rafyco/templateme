@@ -1,31 +1,33 @@
 #!/usr/bin/env python3
 """
-
+Module for template from path.
 """
+import os
+import logging
+import templateme
 from templateme.manifest import Manifest
 from templateme.manifest import ManifestError
-import templateme
-import templateme.abstract
-import logging
-import os
+import templateme.containers.abstract
 
 
-class PathElement(templateme.abstract.TMPElement):
+class PathElement(templateme.containers.abstract.TMPElement):
+    """ Class with template's element file from path. """
 
     def __init__(self, path, localization, template):
-        templateme.abstract.TMPElement.__init__(self, path, template)
+        templateme.containers.abstract.TMPElement.__init__(self, path, template)
         self.localization = localization
         self._load_txt = ""
 
     def load_txt(self):
-        if self._load_txt is "":
-            with open(self.localization) as f:
-                self._load_txt = f.read()
-            f.closed
+        """ Load information from file. """
+        if self._load_txt == "":
+            with open(self.localization) as file_ob:
+                self._load_txt = file_ob.read()
         return self._load_txt
 
 
-class PathTemplate(templateme.abstract.Template):
+class PathTemplate(templateme.containers.abstract.Template):
+    """ Class with template from path. """
 
     def __init__(self, path, name, manager):
         manifest = None
@@ -33,12 +35,12 @@ class PathTemplate(templateme.abstract.Template):
             manifest = Manifest.create_from_file(os.path.join(path, name, "manifest.json"), self)
         except ManifestError:
             pass
-        templateme.abstract.Template.__init__(self, name, manager, manifest)
+        templateme.containers.abstract.Template.__init__(self, name, manager, manifest)
         self._path = os.path.join(path, name)
 
     def _get_elements(self):
         elements = []
-        for root, dirs, files in os.walk(self._path):
+        for root, _, files in os.walk(self._path):
             for name in files:
                 full_path = os.path.join(root, name)
                 if self._is_ignored(full_path):
@@ -49,16 +51,18 @@ class PathTemplate(templateme.abstract.Template):
         return elements
 
 
-class PathSource(templateme.abstract.TMPSource):
+class PathSource(templateme.containers.abstract.TMPSource):
+    """ Class with path source from directory. """
 
     def __init__(self, manager, path=os.path.join(templateme.__path__[0], "templates")):
-        templateme.abstract.TMPSource.__init__(self, manager)
+        templateme.containers.abstract.TMPSource.__init__(self, manager)
         self._path = path
 
     def get_all_templates(self):
+        """ Return all templates from directory. """
         templates = []
         logging.debug(self._path)
-        temp = os.listdir(self._path)
-        for t in temp:
-            templates.append(PathTemplate(self._path, t, self.manager))
+        templates_path = os.listdir(self._path)
+        for temp_file in templates_path:
+            templates.append(PathTemplate(self._path, temp_file, self.manager))
         return templates

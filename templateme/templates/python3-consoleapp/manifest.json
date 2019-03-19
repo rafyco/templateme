@@ -1,0 +1,5 @@
+{
+	"short-description": "Python project with tests",
+	"description": "Template for python module with simple tests",
+    "include" : "python3"
+}

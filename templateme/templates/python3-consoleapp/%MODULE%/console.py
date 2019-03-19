@@ -16,12 +16,14 @@ or::
 for more option call program with flag C{--help}
 """
 
+from __future__ import unicode_literals
+from __future__ import print_function
 import logging
 from argparse import ArgumentParser
 from templateme import get_version
 from templateme.manager import TMPManager
-from templateme.containers.abstract import Template
-from templateme.containers.abstract import TemplateError
+from templateme.abstract import Template
+from templateme.abstract import TemplateError
 
 
 def __option_args(argv=None):
@@ -64,8 +66,7 @@ def set_template_arguments(template):
         default_str = ""
         if value is not None and value != "":
             default_str = " (default: {})".format(value)
-        input_str = input("Write '{}' value{}: ".format(key, default_str))
-        print("{} = {}".format(key, input_str))
+        input_str = input("Write ['{}'] value{}: ".format(key, default_str))
         if input_str == "":
             input_str = value
         template.set_argument(key, input_str)
@@ -85,12 +86,11 @@ def main(argv=None):
     manager = TMPManager(options.project_name)
     if options.list or options.short_list:
         templates = manager.get_all_templates()
-        print("Heres a list of all templates:\n")
         for temp in templates:
             if options.short_list:
                 print("{} ".format(temp))
             else:
-                print(" * {} - {}".format(temp, temp.short_description))
+                print("* {} - {}".format(temp, temp.short_description))
         exit(0)
     elif options.template == "":
         print("You should define template's name\nSee --help for more information")
