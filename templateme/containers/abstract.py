@@ -154,14 +154,19 @@ class Template(abc.ABC):
                 result.append(arg)
         return result
 
+    @classmethod
+    def can_save(self, path):
+        """ Check if template can be save. """
+        if os.path.isdir(path):
+            raise TemplateError("File '{}' already exist".format(path))
+
     def save(self, path, project_name=""):
         """ Save template in path. """
         if self.missing_args:
             raise TemplateError("Args {} not Set".format(self.missing_args))
         if project_name == "":
             project_name = self.name
-        if os.path.isdir(path):
-            raise TemplateError("File '{}' already exist".format(path))
+        self.can_save(path)
         for element in self.elements:
             element.save(path, project_name=project_name)
 

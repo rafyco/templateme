@@ -101,9 +101,10 @@ def main(argv=None):
     if template is None:
         print("There are not template name: ", options.template)
         exit(1)
-    if not options.quite:
-        set_template_arguments(template)
     try:
+        if not options.quite:
+            template.can_save(options.project_name)
+            set_template_arguments(template)
         template.save(options.project_name, options.project_name)
     except TemplateError as ex:
         print("Cannot save: ", ex)
