@@ -53,7 +53,7 @@ class Template(abc.ABC):
         self.manager = manager
         self._name = name
 
-        self._ignored = ['manifest.json', '*.swp']
+        self._ignored = ['manifest.json', '*.swp', "__pycache__", '*.pyc']
         self._include_templates = None
         self._all_args = None
         self._all_elements = None

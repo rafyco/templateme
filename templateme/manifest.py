@@ -51,3 +51,9 @@ class Manifest:
         with open(path) as data_file:
             data = json.load(data_file)
         return Manifest(data, template)
+
+    @staticmethod
+    def create_from_string(text, template):
+        """ Create manifest object from string. """
+        data = json.loads(text)
+        return Manifest(data, template)

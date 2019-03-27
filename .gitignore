@@ -8,3 +8,5 @@ templateme.egg-info
 *.swo
 *.swp
 *.swn
+.eggs
+.idea

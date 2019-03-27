@@ -3,7 +3,7 @@
 Module of template's manager.
 """
 import datetime
-from templateme.containers.path import PathSource
+from templateme.containers.resource import ResourceSource
 
 
 class TMPManagerError(Exception):
@@ -15,7 +15,7 @@ class TMPManager:
 
     def __init__(self, name="Project"):
         self.plugins = []
-        self.plugins.append(PathSource(manager=self))
+        self.plugins.append(ResourceSource(manager=self, source_dir="templates"))
 
         self.email = "annonymous@admin.org"
         self.author = "Annonymous"

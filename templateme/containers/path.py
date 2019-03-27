@@ -54,7 +54,7 @@ class PathTemplate(templateme.containers.abstract.Template):
 class PathSource(templateme.containers.abstract.TMPSource):
     """ Class with path source from directory. """
 
-    def __init__(self, manager, path=os.path.join(templateme.__path__[0], "templates")):
+    def __init__(self, manager, path):
         templateme.containers.abstract.TMPSource.__init__(self, manager)
         self._path = path
 
