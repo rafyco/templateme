@@ -155,7 +155,7 @@ class Template(abc.ABC):
         return result
 
     @classmethod
-    def can_save(self, path):
+    def can_save(cls, path):
         """ Check if template can be save. """
         if os.path.isdir(path):
             raise TemplateError("File '{}' already exist".format(path))
