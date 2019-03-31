@@ -20,7 +20,7 @@ def read_description(module_name):
     return result
 
 CURRENT_PYTHON = sys.version_info[:2]
-REQUIRED_PYTHON = (3, 4)
+REQUIRED_PYTHON = (3, 5)
 
 if CURRENT_PYTHON < REQUIRED_PYTHON:
     sys.stderr.write("""
@@ -67,8 +67,13 @@ setup(
     classifiers=[
         'Environment :: Console',
         'Development Status :: 3 - Alpha',
-        'Programming Language :: Python :: 3.4',
-        'License :: OSI Approved :: GNU General Public License v3 (GPLv3)'
+        'Intended Audience :: Developers',
+        'Intended Audience :: Science/Research',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'License :: OSI Approved :: MIT License',
+        'Topic :: Terminals'
     ],
     install_requires=[
         'pylint',
@@ -81,5 +86,9 @@ setup(
     },
     packages=find_packages(exclude=EXCLUDE_FROM_PACKAGES),
     platforms="Any",
-    keywords="template, programming, fast"
+    keywords="template, programming, fast",
+    project_urls={
+        "Bug Reports": "https://github.com/rafyco/templateme/issues",
+        "Source": "https://github.com/rafyco/templateme"
+    }
 )
