@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
+"""
+Setup file.
+"""
+
 from __future__ import unicode_literals
 import os
 import sys
-import codecs
 from setuptools import setup
 from setuptools import find_packages
 

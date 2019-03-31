@@ -10,6 +10,10 @@ from templateme.manifest import ManifestError
 import templateme.containers.abstract
 
 
+class TemplateError(Exception):
+    """ Problem with template. """
+
+
 class PathElement(templateme.containers.abstract.TMPElement):
     """ Class with template's element file from path. """
 
@@ -35,6 +39,10 @@ class PathTemplate(templateme.containers.abstract.Template):
             manifest = Manifest.create_from_file(os.path.join(path, name, "manifest.json"), self)
         except ManifestError:
             pass
+        except PermissionError as ex:
+            logging.warning("Cannot read manifest file from %s,\n"
+                            "Please try change permissions", path)
+            raise TemplateError("Permission error", ex)
         templateme.containers.abstract.Template.__init__(self, name, manager, manifest)
         self._path = os.path.join(path, name)
 
@@ -60,9 +68,14 @@ class PathSource(templateme.containers.abstract.TMPSource):
 
     def get_all_templates(self):
         """ Return all templates from directory. """
+        logging.debug("Path source, get_templates [%s]", self._path)
         templates = []
         logging.debug(self._path)
         templates_path = os.listdir(self._path)
         for temp_file in templates_path:
-            templates.append(PathTemplate(self._path, temp_file, self.manager))
+            try:
+                templates.append(PathTemplate(self._path, temp_file, self.manager))
+            except TemplateError:
+                logging.warning("Problem with template crated [%s]"
+                                "", os.path.join(self._path, temp_file))
         return templates

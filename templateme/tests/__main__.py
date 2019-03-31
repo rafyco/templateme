@@ -8,7 +8,6 @@ For checking tests call::
 """
 
 # pylint: disable=W0611
-from __future__ import unicode_literals
 import unittest
 from templateme.tests import TestTemplateMeModule
 from templateme.tests.console import TestConsoleModule

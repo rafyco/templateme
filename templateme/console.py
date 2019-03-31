@@ -39,6 +39,7 @@ def __option_args(argv=None):
     parser.add_argument("-d", "--log", dest="logLevel",
                         choices=['DEBUG', 'INFO', 'WARNING',
                                  'ERROR', 'CRITICAL'],
+                        default='ERROR',
                         help="Set the logging level")
     parser.add_argument("-p", "--project-name", metavar="NAME",
                         dest="project_name", default="project",
