@@ -7,6 +7,9 @@ Console programs to make new project in defined language
 .. image:: https://img.shields.io/badge/author-Rafa%C5%82%20Kobel-blue.svg
     :target: https://rafyco.pl
 
+.. image:: https://img.shields.io/readthedocs/templateme.svg
+   :target: https://templateme.readthedocs.io
+
 .. image:: https://img.shields.io/travis/rafyco/templateme.svg
    :target: https://travis-ci.org/rafyco/templateme
 
