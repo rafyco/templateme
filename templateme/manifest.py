@@ -5,6 +5,7 @@ Module to parsing manifest file.
 
 import os
 import json
+import logging
 
 
 class ManifestError(Exception):
@@ -48,8 +49,12 @@ class Manifest:
         """ Create manifest object from file. """
         if not os.path.isfile(path):
             raise ManifestError("Manifest not exist")
-        with open(path) as data_file:
-            data = json.load(data_file)
+        try:
+            with open(path) as data_file:
+                data = json.load(data_file)
+        except json.decoder.JSONDecodeError:
+            logging.warning("Cannot read manifest file [%s]", data_file)
+            raise ManifestError("Invalid manifest file")
         return Manifest(data, template)
 
     @staticmethod

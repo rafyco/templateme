@@ -41,7 +41,7 @@ class TMPElement(abc.ABC):
             os.makedirs(os.path.dirname(save_path))
         except FileExistsError:
             pass
-        file = open(save_path, "a")
+        file = open(save_path, "w")
         file.write(self.text)
         file.close()
         print("save file: ", save_path)
@@ -155,18 +155,20 @@ class Template(abc.ABC):
         return result
 
     @classmethod
-    def can_save(cls, path):
+    def examine_save(cls, path, force=False):
         """ Check if template can be save. """
+        if force:
+            return
         if os.path.isdir(path):
             raise TemplateError("File '{}' already exist".format(path))
 
-    def save(self, path, project_name=""):
+    def save(self, path, project_name="", force=False):
         """ Save template in path. """
         if self.missing_args:
             raise TemplateError("Args {} not Set".format(self.missing_args))
         if project_name == "":
             project_name = self.name
-        self.can_save(path)
+        self.examine_save(path, force=force)
         for element in self.elements:
             element.save(path, project_name=project_name)
 

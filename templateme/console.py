@@ -56,6 +56,9 @@ def __option_args(argv=None):
     parser.add_argument("-t", "--temp", metavar="TEMPLATE",
                         dest="template", default="",
                         help="Template name")
+    parser.add_argument("-f", "--force", action="store_true",
+                        dest="force", default=False,
+                        help="Force save template")
     return parser.parse_args(argv)
 
 
@@ -70,6 +73,27 @@ def set_template_arguments(template):
         if input_str == "":
             input_str = value
         template.set_argument(key, input_str)
+
+
+def examine_save(template, project_name, force):
+    """
+    Check if template exists and you can save it.
+    If not, ask about confirmation to do this.
+    """
+    if force:
+        return
+    try:
+        template.examine_save(project_name)
+    except TemplateError:
+        # Examine not pass, ask user of it
+        input_str = input("File exists. Do you want override the template (y[es]|n[o]): ")
+        if input_str in ("yes", "y", "ok"):
+            print("Template will be overrided")
+        elif input_str in ("no", "n"):
+            print("We not override template")
+            if input_str not in ("no", "n"):
+                print("Next time use one of this answers: y[es]|n[o]")
+            raise
 
 
 def main(argv=None):
@@ -102,11 +126,17 @@ def main(argv=None):
     if template is None:
         print("There are not template name: ", options.template)
         exit(1)
+    force = options.force
     try:
         if not options.quite:
-            template.can_save(options.project_name)
+            examine_save(template, options.project_name, force)
+
+            # if examine was confirmed that you want to save template,
+            # you can rewrite it even on existing files.
+            force = True
+
             set_template_arguments(template)
-        template.save(options.project_name, options.project_name)
+        template.save(options.project_name, options.project_name, force=force)
     except TemplateError as ex:
         print("Cannot save: ", ex)
         exit(2)

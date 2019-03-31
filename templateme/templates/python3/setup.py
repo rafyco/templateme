@@ -45,7 +45,7 @@ setup(
     python_requires='>={}.{}'.format(*REQUIRED_PYTHON),
     description=read_description('%MODULE%'),
     long_description=open("README.rst").read(),
-    url="%GITHUB%",
+    url="%URL%",
     include_package_data=True,
     package_dir={'%MODULE%': '%MODULE%'},
     package_data=package_data(),
