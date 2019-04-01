@@ -44,10 +44,9 @@ version = __import__('templateme').get_version()
 def package_data():
     result = []
     for root, dirs, files in os.walk('./templateme/templates'):
-            for name in files:
-                full_path = os.path.join(root, name)
-                result.append(full_path.replace("./templateme/", "./"))
-    print(result)
+        for name in files:
+            full_path = os.path.join(root, name)
+            result.append(full_path.replace("./templateme/", "./"))
     return { 'templateme' : result }
 
 setup(

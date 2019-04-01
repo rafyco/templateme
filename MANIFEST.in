@@ -1,1 +1,2 @@
-exclude *.orig *.pyc
+exclude *.orig *.pyc __pycache__
+recursive-include templateme/templates *
