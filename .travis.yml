@@ -15,11 +15,4 @@ script:
  - python -m templateme.console --list
  - python setup.py build_sphinx
  - python setup.py sdist
- 
- deploy:
-  provider: releases
-  api_key: "49039406724f2c83591807112edf95dd3f1d6288"
-  file_glob: true
-  file: dist/*.tar.gz
-  skip_cleanup: true
 
