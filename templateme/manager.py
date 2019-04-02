@@ -7,6 +7,7 @@ import logging
 import datetime
 from templateme.containers.resource import ResourceSource
 from templateme.containers.path import PathSource
+from templateme.configuration import Configuration
 
 
 class TMPManagerError(Exception):
@@ -20,8 +21,7 @@ class TMPManager:
         self.plugins = []
         self.__register_sources()
 
-        self.email = "annonymous@admin.org"
-        self.author = "Annonymous"
+        self.__config = Configuration()
         self.name = name
 
     def __register_sources(self):
@@ -55,8 +55,8 @@ class TMPManager:
         """ Rendering template to text format. """
         result = txt
         changes = {
-            'EMAIL': self.email,
-            'AUTHOR': self.author,
+            'EMAIL': self.__config.get_val('email'),
+            'AUTHOR': self.__config.get_val('author'),
             'YEAR': datetime.datetime.now().strftime("%Y"),
             'NAME': self.name
         }

@@ -1,4 +1,5 @@
-Templateme Documentation
+------------------------
+TemplateMe Documentation
 ------------------------
 
 .. include:: ../README.rst
@@ -24,4 +25,5 @@ programs.
     configuration
     creating
     distribution
+    code
     changelog

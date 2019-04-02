@@ -1,2 +1,3 @@
-Usage of Templateme
+-------------------
+Usage of TemplateMe
 -------------------
