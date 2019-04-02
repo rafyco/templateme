@@ -22,6 +22,4 @@ script:
   file_glob: true
   file: dist/*.tar.gz
   skip_cleanup: true
-  on:
-    tags: true
 
