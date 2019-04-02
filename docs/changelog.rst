@@ -9,6 +9,7 @@ version 0.0.4_
 ^^^^^^^^^^^^^^
 
 - Documentation in Sphinx
+- Fix problem with templates in Pypi package
 
 version 0.0.3_
 ^^^^^^^^^^^^^^
