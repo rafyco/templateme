@@ -2,18 +2,26 @@
 """
 Create new project in defined place..
 
-Example usage
-=============
+The TemplateMe works as console application. It allows you to create new
+project from predefined templates. To see list of all available elements
+call:
 
-To invoke program type in your console::
+::
 
-    templateme -t <template_name> -p <your_project_name>
+    templateme --list
 
-or::
+In case that you want to prepare new project for your favourite language
+you need to choose one of the templates and write in your terminal:
 
-    python3 -m templateme -t <template_name> -p <your_project_name>
+::
 
-for more option call program with flag C{--help}
+    templateme -t <template_name> -o <your_project_name>
+
+Where ``<template_name>`` is the one of the templates, listed in previous step
+and ``<your_project_name>`` is a name of folder with your created project. After
+that, the program will ask you to write a few variables that are necessary to
+build templates.
+
 """
 
 import logging
@@ -41,7 +49,7 @@ def __option_args(argv=None):
                                  'ERROR', 'CRITICAL'],
                         default='ERROR',
                         help="Set the logging level")
-    parser.add_argument("-p", "--project-name", metavar="NAME",
+    parser.add_argument("-o", "--out", metavar="NAME",
                         dest="project_name", default="project",
                         help="Project name")
     parser.add_argument("-l", "--list", action="store_true",
@@ -53,7 +61,7 @@ def __option_args(argv=None):
     parser.add_argument("-q", "--quite", action="store_true",
                         dest="quite", default=False,
                         help="Not ask about arguments")
-    parser.add_argument("-t", "--temp", metavar="TEMPLATE",
+    parser.add_argument("-t", "--template", metavar="TEMPLATE",
                         dest="template", default="",
                         help="Template name")
     parser.add_argument("-f", "--force", action="store_true",

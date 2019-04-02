@@ -44,10 +44,9 @@ version = __import__('templateme').get_version()
 def package_data():
     result = []
     for root, dirs, files in os.walk('./templateme/templates'):
-            for name in files:
-                full_path = os.path.join(root, name)
-                result.append(full_path.replace("./templateme/", "./"))
-    print(result)
+        for name in files:
+            full_path = os.path.join(root, name)
+            result.append(full_path.replace("./templateme/", "./"))
     return { 'templateme' : result }
 
 setup(
@@ -77,18 +76,28 @@ setup(
     ],
     install_requires=[
         'pylint',
-        'pep8'
+        'pep8==1.7.1',
+        'Sphinx==1.8.4'
     ],
     entry_points={
         'console_scripts': [
             'templateme = templateme.console:main',
         ]
     },
+    command_options={
+        'build_sphinx': {
+            'project': ('setup.py', "templateme"),
+            'version': ('setup.py', version),
+            'release': ('setup.py', version),
+            'source_dir': ('setup.py', "docs")
+        }
+    },
     packages=find_packages(exclude=EXCLUDE_FROM_PACKAGES),
     platforms="Any",
     keywords="template, programming, fast",
     project_urls={
         "Bug Reports": "https://github.com/rafyco/templateme/issues",
-        "Source": "https://github.com/rafyco/templateme"
+        "Source": "https://github.com/rafyco/templateme",
+        "Documentation": "https://templateme.readthedocs.io/en/latest/"
     }
 )
