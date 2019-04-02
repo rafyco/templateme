@@ -5,7 +5,7 @@ Changelog
 versions 0.1.*
 ~~~~~~~~~~~~~~
 
-version 0.0.4_
+version 0.0.5_
 ^^^^^^^^^^^^^^
 
 - Documentation in Sphinx
@@ -30,7 +30,7 @@ version 0.0.1_
 - Console program to create new program
 
 
-.. _0.0.4: https://github.com/rafyco/templateme/releases/v0.0.4
+.. _0.0.5: https://github.com/rafyco/templateme/releases/v0.0.5
 .. _0.0.3: https://github.com/rafyco/templateme/releases/v0.0.3
 .. _0.0.2: https://github.com/rafyco/templateme/releases/v0.0.2
 .. _0.0.1: https://github.com/rafyco/templateme/releases/v0.0.1

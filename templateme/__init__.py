@@ -6,6 +6,6 @@ Template Me - module with template for your favourite projects.
 
 def get_version():
     """ Get version of protemp package. """
-    return "0.0.3"
+    return "0.0.5"
 
 __version__ = get_version()
