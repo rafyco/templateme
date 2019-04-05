@@ -50,8 +50,8 @@ def __option_args(argv=None):
                         default='ERROR',
                         help="Set the logging level")
     parser.add_argument("-o", "--out", metavar="NAME",
-                        dest="project_name", default="project",
-                        help="Project name")
+                        dest="project_name", default=None,
+                        help="Name of your new project directory")
     parser.add_argument("-l", "--list", action="store_true",
                         dest="list", default=False,
                         help="List available templates")
@@ -88,7 +88,7 @@ def examine_save(template, project_name, force):
     Check if template exists and you can save it.
     If not, ask about confirmation to do this.
     """
-    if force:
+    if force or project_name is None:
         return
     try:
         template.examine_save(project_name)
@@ -104,7 +104,7 @@ def examine_save(template, project_name, force):
             raise
 
 
-def main(argv=None):
+def main(argv=None, debug=False):
     """
     Main function for command line program.
 
@@ -115,7 +115,7 @@ def main(argv=None):
     logging.basicConfig(format='%(asctime)s - %(name)s - '
                                '%(levelname)s - %(message)s',
                         level=options.logLevel)
-    manager = TMPManager(options.project_name)
+    manager = TMPManager(options.project_name, debug=debug)
     if options.list or options.short_list:
         templates = manager.get_all_templates()
         print("Heres a list of all templates:\n")

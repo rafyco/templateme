@@ -31,7 +31,7 @@ This version of Templateme requires Python {}.{}, but you're trying to
 install it on Python {}.{}.
 This may be because you are using a version of pip that doesn't
 understand the python_requires classifier. Make sure you
-have python 3.4 or newer, then try again:
+have python 3.5 or newer, then try again:
     $ python3 -m pip install --upgrade pip setuptools
     $ pip3 install templateme
 """.format(*(REQUIRED_PYTHON + CURRENT_PYTHON)))
@@ -76,6 +76,7 @@ setup(
     ],
     install_requires=[
         'pylint',
+        'mock',
         'pep8==1.7.1',
         'Sphinx==1.8.4'
     ],

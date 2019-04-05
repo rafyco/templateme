@@ -32,11 +32,22 @@ class TMPElement(abc.ABC):
             self._format = self.template.manager.render_template_txt(self.load_txt(), self.template)
         return self._format
 
+    @property
+    def save_path(self):
+        """ Path to save element in output directory. """
+        return self.template.manager.render_template_txt(self.path, self.template)
+
+    def print_element(self):
+        """ Print path and source of element. """
+        print("{selector}\n{el_path}\n{selector}\n{el_source}\n{selector}\n\n"
+              "".format(selector="--------",
+                        el_path=self.save_path,
+                        el_source=self.text))
+
     def save(self, path, project_name="project"):
-        """ Save element in project file. """
-        save_path = os.path.join(path, self.path)
+        """ Save element in project. """
+        save_path = os.path.join(path, self.save_path)
         save_path = re.sub(r"/^{}/".format(self.template.name), project_name, save_path)
-        save_path = self.template.manager.render_template_txt(save_path, self.template)
         try:
             os.makedirs(os.path.dirname(save_path))
         except FileExistsError:
@@ -162,12 +173,20 @@ class Template(abc.ABC):
         if os.path.isdir(path):
             raise TemplateError("File '{}' already exist".format(path))
 
-    def save(self, path, project_name="", force=False):
+    def print_elements(self):
+        """ Print elements on the screen. """
+        for element in self.elements:
+            element.print_element()
+
+    def save(self, path, project_name=None, force=False):
         """ Save template in path. """
         if self.missing_args:
             raise TemplateError("Args {} not Set".format(self.missing_args))
         if project_name == "":
             project_name = self.name
+        elif project_name is None:
+            self.print_elements()
+            return
         self.examine_save(path, force=force)
         for element in self.elements:
             element.save(path, project_name=project_name)
@@ -196,5 +215,6 @@ class TMPSource(abc.ABC):
         """ Get one of templates by id. """
         for template in self.templates:
             if template.name == name:
+                assert isinstance(template, Template)
                 return template
         return None

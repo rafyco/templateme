@@ -17,16 +17,19 @@ class TMPManagerError(Exception):
 class TMPManager:
     """ Template manager. """
 
-    def __init__(self, name="Project"):
+    def __init__(self, name="Project", debug=False):
         self.plugins = []
-        self.__register_sources()
+        self.__config = Configuration(debug=debug)
 
-        self.__config = Configuration()
+        self.__register_sources()
         self.name = name
 
     def __register_sources(self):
         """ Register all plugins needed by manager. """
         self.plugins.append(ResourceSource(manager=self, source_dir="templates"))
+        if self.__config.debug:
+            logging.debug("Debug mode, find templates only from package")
+            return
         for template_path in ["/etc/templateme", "~/.config/templateme"]:
             template_path = os.path.expanduser(template_path)
             if os.path.isdir(template_path):
@@ -58,7 +61,7 @@ class TMPManager:
             'EMAIL': self.__config.get_val('email'),
             'AUTHOR': self.__config.get_val('author'),
             'YEAR': datetime.datetime.now().strftime("%Y"),
-            'NAME': self.name
+            'NAME': self.name if self.name is not None else "console"
         }
         changes.update(template.args)
         for key in changes:

@@ -11,7 +11,7 @@ from __future__ import unicode_literals
 import unittest
 import os
 import pep8
-from pylint.lint import Run
+from pylint.lint import Run as run_pylint
 import templateme
 
 
@@ -51,7 +51,7 @@ class TestTemplateMeModule(unittest.TestCase):  # pylint: disable=R0904
         """ Documentation tests. """
         status = 0
         try:
-            Run(['-d', 'I0011,R0801,R0902,R0903,R0921', 'templateme'])
+            run_pylint(['-d', 'I0011,R0801,R0902,R0903,R0921', 'templateme'])
         except SystemExit as ex:
             status = int(ex.code)
         self.assertEqual(status, 0, "[Pylint] Found code style errors"
