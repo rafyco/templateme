@@ -30,7 +30,9 @@ class TMPManager:
         if self.__config.debug:
             logging.debug("Debug mode, find templates only from package")
             return
-        for template_path in ["/etc/templateme", "~/.config/templateme"]:
+        template_path_tab = ["/etc/templateme", "~/.config/templateme"]
+        template_path_tab = template_path_tab + self.__config.localizations
+        for template_path in template_path_tab:
             template_path = os.path.expanduser(template_path)
             if os.path.isdir(template_path):
                 path_source = PathSource(manager=self, path=template_path)
