@@ -171,7 +171,9 @@ class Template(abc.ABC):
     def save(self, path, project_name=None, force=False):
         """ Save template in path. """
         if self.args.missing_args:
-            raise TemplateError("Args {} not Set".format(self.args.missing_args))
+            raise TemplateError("cannot set {} arguments. First is [{}]"
+                                "".format(len(self.args.missing_args),
+                                          self.args.missing_args[0]))
         if project_name == "":
             project_name = self.name
         elif project_name is None:

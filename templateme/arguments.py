@@ -16,13 +16,13 @@ class Argument:
                  description=None):
         self.__name = name.lower()
         self.__required = required
-        self.__default = default if default is not None else ""
+        self.default = default if default is not None else ""
         default_question = "Put the '{value}' value"
         self.__question = question if question is not None and question != "" else default_question
         self.description = description if description is not None and description != "" \
             else "Value of '{}'".format(name)
-        if self.__default != "":
-            self.description = "{} (default: {})".format(self.description, self.__default)
+        if self.default != "":
+            self.description = "{} (default: {})".format(self.description, self.default)
         self.__value = None
 
     @staticmethod
@@ -47,7 +47,7 @@ class Argument:
     def value(self):
         """ Value of argument. """
         if self.__value is None:
-            return self.__default
+            return self.default
         return self.__value
 
     @value.setter
@@ -66,6 +66,9 @@ class Argument:
     def question(self):
         """ String of question about value. """
         return self.__question.format(value=self.name)
+
+    def __str__(self):
+        return self.__name
 
 
 class ArgumentsContainer:

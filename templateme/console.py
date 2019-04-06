@@ -70,6 +70,24 @@ def __option_args(argv=None):
     return parser.parse_args(argv)
 
 
+def print_template(template):
+    """ Print information about template. """
+    separator = "-----------------------"
+    print("{sep}\nTemplate - {name}\n{sep}".format(sep=separator, name=template.name))
+    print("{short_desc}\n\n{desc}\n{sep}"
+          "".format(sep=separator,
+                    short_desc=template.short_description,
+                    desc=template.description))
+    print("")
+    for attribute in template.args.all.values():
+        print(" - {} - {}".format(attribute.name, attribute.description))
+
+    print("\n{}\n".format(separator))
+    for elem in template.elements:
+        print(" * ./{}".format(elem.path))
+    print("\n{}".format(separator))
+
+
 def examine_save(template, project_name, force):
     """
     Check if template exists and you can save it.
@@ -104,14 +122,19 @@ def main(argv=None, debug=False):
                         level=options.logLevel)
     manager = TMPManager(options.project_name, debug=debug)
     if options.list or options.short_list:
-        templates = manager.get_all_templates()
-        print("Here's a list of all templates:\n")
-        for temp in templates:
-            if options.short_list:
-                print("{} ".format(temp))
-            else:
-                print(" * {} - {}".format(temp, temp.short_description))
-        exit(0)
+        if options.template == "":
+            templates = manager.get_all_templates()
+            print("Here's a list of all templates:\n")
+            for temp in templates:
+                if options.short_list:
+                    print("{} ".format(temp))
+                else:
+                    print(" * {} - {}".format(temp, temp.short_description))
+            exit(0)
+        else:
+            template = manager.get_template(options.template)
+            print_template(template)
+            exit(0)
     elif options.template == "":
         print("You should define template's name\nSee --help for more information")
         exit(1)
