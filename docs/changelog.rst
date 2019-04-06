@@ -10,6 +10,7 @@ version 0.0.6_
 
 - Prepare better tests for console application
 - More options to create arguments for template
+- Arguments you can add from command application
 
 version 0.0.5_
 ^^^^^^^^^^^^^^
