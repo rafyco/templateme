@@ -73,6 +73,8 @@ class PathSource(templateme.containers.abstract.TMPSource):
         logging.debug(self._path)
         templates_path = os.listdir(self._path)
         for temp_file in templates_path:
+            if not os.path.isdir(os.path.join(self._path, temp_file)):
+                continue
             try:
                 templates.append(PathTemplate(self._path, temp_file, self.manager))
             except TemplateError:

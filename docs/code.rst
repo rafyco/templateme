@@ -11,6 +11,11 @@ module templateme
 .. automodule:: templateme
     :members:
 
+module templateme.arguments
+-------------------------------
+.. automodule:: templateme.arguments
+    :members:
+
 module templateme.configuration
 -------------------------------
 .. automodule:: templateme.configuration

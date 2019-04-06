@@ -6,6 +6,7 @@ import fnmatch
 import abc
 import os
 import re
+from templateme.arguments import empty_args
 
 
 class TemplateError(Exception):
@@ -32,11 +33,22 @@ class TMPElement(abc.ABC):
             self._format = self.template.manager.render_template_txt(self.load_txt(), self.template)
         return self._format
 
+    @property
+    def save_path(self):
+        """ Path to save element in output directory. """
+        return self.template.manager.render_template_txt(self.path, self.template)
+
+    def print_element(self):
+        """ Print path and source of element. """
+        print("{selector}\n{el_path}\n{selector}\n{el_source}\n{selector}\n\n"
+              "".format(selector="--------",
+                        el_path=self.save_path,
+                        el_source=self.text))
+
     def save(self, path, project_name="project"):
-        """ Save element in project file. """
-        save_path = os.path.join(path, self.path)
+        """ Save element in project. """
+        save_path = os.path.join(path, self.save_path)
         save_path = re.sub(r"/^{}/".format(self.template.name), project_name, save_path)
-        save_path = self.template.manager.render_template_txt(save_path, self.template)
         try:
             os.makedirs(os.path.dirname(save_path))
         except FileExistsError:
@@ -57,13 +69,25 @@ class Template(abc.ABC):
         self._include_templates = None
         self._all_args = None
         self._all_elements = None
-        self._args = {}
+        self.__args = None
+        self.__args_updated = False
         self._includes = []
         self.manifest = manifest
         if self.manifest:
             for include in self.manifest.include:
                 self._includes.append(include)
-            self._args = manifest.args
+            self.__args = manifest.args
+        else:
+            self.__args = empty_args()
+
+    @property
+    def args(self):
+        """ Arguments with manifest updated file. """
+        if not self.__args_updated:
+            for inc in self.include_templates:
+                self.__args.update(inc.args)
+            self.__args_updated = True
+        return self.__args
 
     def add_ignored(self, args):
         """ Add ignore pattern. """
@@ -74,10 +98,6 @@ class Template(abc.ABC):
             self._ignored.append(args)
         else:
             raise AttributeError("Argument should have type 'list' or 'str'")
-
-    def set_argument(self, key, value):
-        """ Set one of arguments. """
-        self.args[key] = value
 
     def _is_ignored(self, full_path):
         """ Tell if path file is ignored. """
@@ -110,16 +130,6 @@ class Template(abc.ABC):
         return self._include_templates
 
     @property
-    def args(self):
-        """ List of all arguments. """
-        if self._all_args is None:
-            result = self._args
-            for inc in self.include_templates:
-                result.update(inc.args)
-            self._all_args = result
-        return self._all_args
-
-    @property
     def elements(self):
         """ List of all template's elements. """
         if self._all_elements is None:
@@ -145,15 +155,6 @@ class Template(abc.ABC):
             return self.manifest.description
         return "no description"
 
-    @property
-    def missing_args(self):
-        """ List of missing arguments. """
-        result = []
-        for arg, value in self.args.items():
-            if value is None or value == "":
-                result.append(arg)
-        return result
-
     @classmethod
     def examine_save(cls, path, force=False):
         """ Check if template can be save. """
@@ -162,12 +163,22 @@ class Template(abc.ABC):
         if os.path.isdir(path):
             raise TemplateError("File '{}' already exist".format(path))
 
-    def save(self, path, project_name="", force=False):
+    def print_elements(self):
+        """ Print elements on the screen. """
+        for element in self.elements:
+            element.print_element()
+
+    def save(self, path, project_name=None, force=False):
         """ Save template in path. """
-        if self.missing_args:
-            raise TemplateError("Args {} not Set".format(self.missing_args))
+        if self.args.missing_args:
+            raise TemplateError("cannot set {} arguments. First is [{}]"
+                                "".format(len(self.args.missing_args),
+                                          self.args.missing_args[0]))
         if project_name == "":
             project_name = self.name
+        elif project_name is None:
+            self.print_elements()
+            return
         self.examine_save(path, force=force)
         for element in self.elements:
             element.save(path, project_name=project_name)
@@ -196,5 +207,6 @@ class TMPSource(abc.ABC):
         """ Get one of templates by id. """
         for template in self.templates:
             if template.name == name:
+                assert isinstance(template, Template)
                 return template
         return None

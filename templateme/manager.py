@@ -17,17 +17,22 @@ class TMPManagerError(Exception):
 class TMPManager:
     """ Template manager. """
 
-    def __init__(self, name="Project"):
+    def __init__(self, name="Project", debug=False):
         self.plugins = []
-        self.__register_sources()
+        self.__config = Configuration(debug=debug)
 
-        self.__config = Configuration()
+        self.__register_sources()
         self.name = name
 
     def __register_sources(self):
         """ Register all plugins needed by manager. """
         self.plugins.append(ResourceSource(manager=self, source_dir="templates"))
-        for template_path in ["/etc/templateme", "~/.config/templateme"]:
+        if self.__config.debug:
+            logging.debug("Debug mode, find templates only from package")
+            return
+        template_path_tab = ["/etc/templateme", "~/.config/templateme"]
+        template_path_tab = template_path_tab + self.__config.localizations
+        for template_path in template_path_tab:
             template_path = os.path.expanduser(template_path)
             if os.path.isdir(template_path):
                 path_source = PathSource(manager=self, path=template_path)
@@ -58,9 +63,10 @@ class TMPManager:
             'EMAIL': self.__config.get_val('email'),
             'AUTHOR': self.__config.get_val('author'),
             'YEAR': datetime.datetime.now().strftime("%Y"),
-            'NAME': self.name
+            'NAME': self.name if self.name is not None else "console"
         }
-        changes.update(template.args)
-        for key in changes:
-            result = result.replace("%{}%".format(key.upper()), changes[key])
+        template.args.add_values(changes)
+        for key in template.args.all:
+            elem = template.args.get_argument(key)
+            result = result.replace("%{}%".format(elem.name), elem.value)
         return result

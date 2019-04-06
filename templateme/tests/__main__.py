@@ -12,6 +12,7 @@ import unittest
 from templateme.tests import TestTemplateMeModule
 from templateme.tests.console import TestConsoleModule
 from templateme.tests.templates import TestTemplatesModule
+from templateme.tests.arguments import TestArgumentsModule
 
 
 if __name__ == "__main__":

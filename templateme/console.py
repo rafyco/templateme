@@ -26,6 +26,7 @@ build templates.
 
 import logging
 from argparse import ArgumentParser
+from argparse import ArgumentTypeError
 from templateme import get_version
 from templateme.manager import TMPManager
 from templateme.containers.abstract import Template
@@ -40,6 +41,15 @@ def __option_args(argv=None):
     @type argv: list
     @return: parsed arguments
     """
+    def check_arguments(value):
+        """ Check if argument value looks ok. """
+        valuelist = value.split("=")
+        if len(valuelist) != 2:
+            raise ArgumentTypeError("Value should have format: argument=value")
+        if valuelist[0].strip() == "" or valuelist[1].strip() == "":
+            raise ArgumentTypeError("Value and argument name should not be empty")
+        return valuelist
+
     parser = ArgumentParser(description="Create new project from template",
                             prog='templateme')
     parser.add_argument("-v", "--version", action='version',
@@ -50,14 +60,18 @@ def __option_args(argv=None):
                         default='ERROR',
                         help="Set the logging level")
     parser.add_argument("-o", "--out", metavar="NAME",
-                        dest="project_name", default="project",
-                        help="Project name")
+                        dest="project_name", default=None,
+                        help="Name of your new project directory")
     parser.add_argument("-l", "--list", action="store_true",
                         dest="list", default=False,
                         help="List available templates")
     parser.add_argument("-s", "--short-list", action="store_true",
                         dest="short_list", default=False,
                         help="Templates list wihtout description")
+    parser.add_argument("-a", "--argument", action="append",
+                        dest="argvalues", type=check_arguments,
+                        default=[],
+                        help="List of predefinied arguments")
     parser.add_argument("-q", "--quite", action="store_true",
                         dest="quite", default=False,
                         help="Not ask about arguments")
@@ -70,17 +84,22 @@ def __option_args(argv=None):
     return parser.parse_args(argv)
 
 
-def set_template_arguments(template):
-    """ Set argument for template. """
-    for key, value in template.args.items():
-        default_str = ""
-        if value is not None and value != "":
-            default_str = " (default: {})".format(value)
-        input_str = input("Write '{}' value{}: ".format(key, default_str))
-        print("{} = {}".format(key, input_str))
-        if input_str == "":
-            input_str = value
-        template.set_argument(key, input_str)
+def print_template(template):
+    """ Print information about template. """
+    separator = "-----------------------"
+    print("{sep}\nTemplate - {name}\n{sep}".format(sep=separator, name=template.name))
+    print("{short_desc}\n\n{desc}\n{sep}"
+          "".format(sep=separator,
+                    short_desc=template.short_description,
+                    desc=template.description))
+    print("")
+    for attribute in template.args.all.values():
+        print(" - {} - {}".format(attribute.name, attribute.description))
+
+    print("\n{}\n".format(separator))
+    for elem in template.elements:
+        print(" * ./{}".format(elem.path))
+    print("\n{}".format(separator))
 
 
 def examine_save(template, project_name, force):
@@ -88,7 +107,7 @@ def examine_save(template, project_name, force):
     Check if template exists and you can save it.
     If not, ask about confirmation to do this.
     """
-    if force:
+    if force or project_name is None:
         return
     try:
         template.examine_save(project_name)
@@ -104,7 +123,7 @@ def examine_save(template, project_name, force):
             raise
 
 
-def main(argv=None):
+def main(argv=None, debug=False):
     """
     Main function for command line program.
 
@@ -115,16 +134,22 @@ def main(argv=None):
     logging.basicConfig(format='%(asctime)s - %(name)s - '
                                '%(levelname)s - %(message)s',
                         level=options.logLevel)
-    manager = TMPManager(options.project_name)
+    manager = TMPManager(options.project_name, debug=debug)
+
     if options.list or options.short_list:
-        templates = manager.get_all_templates()
-        print("Heres a list of all templates:\n")
-        for temp in templates:
-            if options.short_list:
-                print("{} ".format(temp))
-            else:
-                print(" * {} - {}".format(temp, temp.short_description))
-        exit(0)
+        if options.template == "":
+            templates = manager.get_all_templates()
+            print("Here's a list of all templates:\n")
+            for temp in templates:
+                if options.short_list:
+                    print("{} ".format(temp))
+                else:
+                    print(" * {} - {}".format(temp, temp.short_description))
+            exit(0)
+        else:
+            template = manager.get_template(options.template)
+            print_template(template)
+            exit(0)
     elif options.template == "":
         print("You should define template's name\nSee --help for more information")
         exit(1)
@@ -135,6 +160,7 @@ def main(argv=None):
         print("There are not template name: ", options.template)
         exit(1)
     force = options.force
+    template.args.add_values_from_list(options.argvalues)
     try:
         if not options.quite:
             examine_save(template, options.project_name, force)
@@ -143,7 +169,7 @@ def main(argv=None):
             # you can rewrite it even on existing files.
             force = True
 
-            set_template_arguments(template)
+            template.args.input_missing()
         template.save(options.project_name, options.project_name, force=force)
     except TemplateError as ex:
         print("Cannot save: ", ex)
