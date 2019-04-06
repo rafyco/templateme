@@ -85,6 +85,29 @@ class TestConsoleModule(unittest.TestCase):  # pylint: disable=R0904
         self.assertEqual(status, 0)
         self.assertTrue(self.tmp_stdout.getvalue().find(str_check) > -1)
 
+    def test_create_with_arguments(self):
+        """ Test if argument arg works. """
+        str_check = 'SomeStringTakePlaceInCode'
+        status = 0
+        try:
+            console_program(['-t', 'cpp', '-a', "class={}".format(str_check)], debug=True)
+        except SystemExit as ex:
+            if ex.code is not None:
+                status = ex.code  # pylint disable=E0012, R0204
+        self.assertEqual(status, 0)
+        self.assertTrue(self.tmp_stdout.getvalue().find(str_check) > -1)
+
+        for invalid_arg in ["value", "=", "a=", "=a", "a=a=v"]:
+            try:
+                console_program(['-t', 'cpp', '-a', "class=class",
+                                 '-a', invalid_arg],
+                                debug=True)
+            except SystemExit as ex:
+                if ex.code is not None:
+                    status = ex.code  # pylint disable=E0012, R0204
+            self.assertEqual(status, 2, "Invalid argument test result:({}=2), checked arg [{}]"
+                             "".format(status, invalid_arg))
+
     def test_create_template_quiet(self):
         """ Test if template realy not ask in quiet mode. """
         status = 0

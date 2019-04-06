@@ -26,6 +26,7 @@ build templates.
 
 import logging
 from argparse import ArgumentParser
+from argparse import ArgumentTypeError
 from templateme import get_version
 from templateme.manager import TMPManager
 from templateme.containers.abstract import Template
@@ -40,6 +41,15 @@ def __option_args(argv=None):
     @type argv: list
     @return: parsed arguments
     """
+    def check_arguments(value):
+        """ Check if argument value looks ok. """
+        valuelist = value.split("=")
+        if len(valuelist) != 2:
+            raise ArgumentTypeError("Value should have format: argument=value")
+        if valuelist[0].strip() == "" or valuelist[1].strip() == "":
+            raise ArgumentTypeError("Value and argument name should not be empty")
+        return valuelist
+
     parser = ArgumentParser(description="Create new project from template",
                             prog='templateme')
     parser.add_argument("-v", "--version", action='version',
@@ -58,6 +68,10 @@ def __option_args(argv=None):
     parser.add_argument("-s", "--short-list", action="store_true",
                         dest="short_list", default=False,
                         help="Templates list wihtout description")
+    parser.add_argument("-a", "--argument", action="append",
+                        dest="argvalues", type=check_arguments,
+                        default=[],
+                        help="List of predefinied arguments")
     parser.add_argument("-q", "--quite", action="store_true",
                         dest="quite", default=False,
                         help="Not ask about arguments")
@@ -121,6 +135,7 @@ def main(argv=None, debug=False):
                                '%(levelname)s - %(message)s',
                         level=options.logLevel)
     manager = TMPManager(options.project_name, debug=debug)
+
     if options.list or options.short_list:
         if options.template == "":
             templates = manager.get_all_templates()
@@ -145,6 +160,7 @@ def main(argv=None, debug=False):
         print("There are not template name: ", options.template)
         exit(1)
     force = options.force
+    template.args.add_values_from_list(options.argvalues)
     try:
         if not options.quite:
             examine_save(template, options.project_name, force)

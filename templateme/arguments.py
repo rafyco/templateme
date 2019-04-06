@@ -112,16 +112,27 @@ class ArgumentsContainer:
             input_str = input("{}: ".format(argument.question))
             argument.value = input_str
 
+    def __update_value(self, key, value):
+        """ Update value of existing atribute or add new one. """
+        if key.lower() in self.__arguments:
+            self.__arguments[key.lower()].value = value
+        else:
+            new_argument = Argument(key)
+            new_argument.value = value
+            self.__arguments[key.lower()] = new_argument
+
     def add_values(self, list_of_values):
         """ Add value of element. """
         assert isinstance(list_of_values, dict)
         for key in list_of_values:
-            if key.lower() in self.__arguments:
-                self.__arguments[key.lower()].value = list_of_values[key]
-            else:
-                new_argument = Argument(key)
-                new_argument.value = list_of_values[key]
-                self.__arguments[key.lower()] = new_argument
+            self.__update_value(key, list_of_values[key])
+
+    def add_values_from_list(self, list_of_arguments):
+        """ Add values from list of 2-elements lists. """
+        assert isinstance(list_of_arguments, list)
+        for argument_elem in list_of_arguments:
+            assert isinstance(argument_elem, list) and len(argument_elem) == 2
+            self.__update_value(argument_elem[0], argument_elem[1])
 
     def get_argument(self, key):
         """ Get argument by key. """
