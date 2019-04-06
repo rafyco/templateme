@@ -70,19 +70,6 @@ def __option_args(argv=None):
     return parser.parse_args(argv)
 
 
-def set_template_arguments(template):
-    """ Set argument for template. """
-    for key, value in template.args.items():
-        default_str = ""
-        if value is not None and value != "":
-            default_str = " (default: {})".format(value)
-        input_str = input("Write '{}' value{}: ".format(key, default_str))
-        print("{} = {}".format(key, input_str))
-        if input_str == "":
-            input_str = value
-        template.set_argument(key, input_str)
-
-
 def examine_save(template, project_name, force):
     """
     Check if template exists and you can save it.
@@ -118,7 +105,7 @@ def main(argv=None, debug=False):
     manager = TMPManager(options.project_name, debug=debug)
     if options.list or options.short_list:
         templates = manager.get_all_templates()
-        print("Heres a list of all templates:\n")
+        print("Here's a list of all templates:\n")
         for temp in templates:
             if options.short_list:
                 print("{} ".format(temp))
@@ -143,7 +130,7 @@ def main(argv=None, debug=False):
             # you can rewrite it even on existing files.
             force = True
 
-            set_template_arguments(template)
+            template.args.input_missing()
         template.save(options.project_name, options.project_name, force=force)
     except TemplateError as ex:
         print("Cannot save: ", ex)

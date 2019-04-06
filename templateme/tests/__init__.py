@@ -10,6 +10,8 @@ TestCase checking module files. It should be conform to PEP8.
 from __future__ import unicode_literals
 import unittest
 import os
+import sys
+from io import StringIO
 import pep8
 from pylint.lint import Run as run_pylint
 import templateme
@@ -40,7 +42,7 @@ class TestTemplateMeModule(unittest.TestCase):  # pylint: disable=R0904
         return recursive_checker(templateme.__path__[0])
 
     def test_pep8(self):
-        """ Test that we conform to PEP8. """
+        """ Tests that we conform to PEP8. """
         pep8_style = pep8.StyleGuide(paths=['--ignore=E501'])
         # Disable E501 code (line too long). It should be enabled after fixed.
         result = pep8_style.check_files(TestTemplateMeModule.__get_sources_file())
@@ -48,12 +50,23 @@ class TestTemplateMeModule(unittest.TestCase):  # pylint: disable=R0904
                          "Found code style errors (and warnings).")
 
     def test_pylint(self):
-        """ Documentation tests. """
+        """ Tests that we conform to Pylint's rules. """
         status = 0
+        output = None
         try:
-            run_pylint(['-d', 'I0011,R0801,R0902,R0903,R0921', 'templateme'])
+            old_stdout = sys.stdout
+            old_stderr = sys.stderr
+            sys.stdout = output = StringIO()
+            sys.stderr = StringIO()
+            run_pylint(['-d', 'I0011,R0801,R0902,R0903,R0913,R0921', 'templateme'])
         except SystemExit as ex:
             status = int(ex.code)
+        finally:
+            sys.stdout = old_stdout
+            sys.stderr = old_stderr
+
+        if status != 0 and output is not None:
+            print(output.getvalue())
         self.assertEqual(status, 0, "[Pylint] Found code style errors"
                                     " (and warnings).")
 

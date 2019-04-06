@@ -65,7 +65,8 @@ class TMPManager:
             'YEAR': datetime.datetime.now().strftime("%Y"),
             'NAME': self.name if self.name is not None else "console"
         }
-        changes.update(template.args)
-        for key in changes:
-            result = result.replace("%{}%".format(key.upper()), changes[key])
+        template.args.add_values(changes)
+        for key in template.args.all:
+            elem = template.args.get_argument(key)
+            result = result.replace("%{}%".format(elem.name), elem.value)
         return result

@@ -6,6 +6,7 @@ import fnmatch
 import abc
 import os
 import re
+from templateme.arguments import empty_args
 
 
 class TemplateError(Exception):
@@ -68,13 +69,25 @@ class Template(abc.ABC):
         self._include_templates = None
         self._all_args = None
         self._all_elements = None
-        self._args = {}
+        self.__args = None
+        self.__args_updated = False
         self._includes = []
         self.manifest = manifest
         if self.manifest:
             for include in self.manifest.include:
                 self._includes.append(include)
-            self._args = manifest.args
+            self.__args = manifest.args
+        else:
+            self.__args = empty_args()
+
+    @property
+    def args(self):
+        """ Arguments with manifest updated file. """
+        if not self.__args_updated:
+            for inc in self.include_templates:
+                self.__args.update(inc.args)
+            self.__args_updated = True
+        return self.__args
 
     def add_ignored(self, args):
         """ Add ignore pattern. """
@@ -85,10 +98,6 @@ class Template(abc.ABC):
             self._ignored.append(args)
         else:
             raise AttributeError("Argument should have type 'list' or 'str'")
-
-    def set_argument(self, key, value):
-        """ Set one of arguments. """
-        self.args[key] = value
 
     def _is_ignored(self, full_path):
         """ Tell if path file is ignored. """
@@ -121,16 +130,6 @@ class Template(abc.ABC):
         return self._include_templates
 
     @property
-    def args(self):
-        """ List of all arguments. """
-        if self._all_args is None:
-            result = self._args
-            for inc in self.include_templates:
-                result.update(inc.args)
-            self._all_args = result
-        return self._all_args
-
-    @property
     def elements(self):
         """ List of all template's elements. """
         if self._all_elements is None:
@@ -156,15 +155,6 @@ class Template(abc.ABC):
             return self.manifest.description
         return "no description"
 
-    @property
-    def missing_args(self):
-        """ List of missing arguments. """
-        result = []
-        for arg, value in self.args.items():
-            if value is None or value == "":
-                result.append(arg)
-        return result
-
     @classmethod
     def examine_save(cls, path, force=False):
         """ Check if template can be save. """
@@ -180,8 +170,8 @@ class Template(abc.ABC):
 
     def save(self, path, project_name=None, force=False):
         """ Save template in path. """
-        if self.missing_args:
-            raise TemplateError("Args {} not Set".format(self.missing_args))
+        if self.args.missing_args:
+            raise TemplateError("Args {} not Set".format(self.args.missing_args))
         if project_name == "":
             project_name = self.name
         elif project_name is None:

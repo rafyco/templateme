@@ -6,6 +6,7 @@ Module to parsing manifest file.
 import os
 import json
 import logging
+from templateme.arguments import ArgumentsContainer
 
 
 class ManifestError(Exception):
@@ -30,19 +31,7 @@ class Manifest:
         if not isinstance(self.include, list):
             self.include = [self.include]
 
-        self.args = {}
-        args = self._read_argument("args", {})
-        self._add_arguments(args)
-
-    def _add_arguments(self, args):
-        if isinstance(args, list):
-            for key in args:
-                self.args[key] = None
-        elif isinstance(args, dict):
-            for key, value in args.items():
-                self.args[key] = value
-        else:
-            raise AttributeError()
+        self.args = ArgumentsContainer(self._read_argument("args", []))
 
     @staticmethod
     def create_from_file(path, template):

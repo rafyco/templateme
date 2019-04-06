@@ -9,6 +9,7 @@ version 0.0.6_
 ^^^^^^^^^^^^^^
 
 - Prepare better tests for console application
+- More options to create arguments for template
 
 version 0.0.5_
 ^^^^^^^^^^^^^^

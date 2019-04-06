@@ -1,9 +1,13 @@
 {
-	"short-description": "C++ template",
-	"description": "C++ template",
+	"short-description": "Test for python's module",
+	"description": "Simple test files for python project",
     "include" : [ "python3-tests" ],
-	"args": {
-		"module": null,
-		"url": null
-	}
+	"args": [
+		{
+			"name": "module"
+		},
+		{
+			"name": "url"
+		}
+	]
 }

@@ -1,7 +1,9 @@
 {
 	"short-description": "C++ class template",
 	"description": "C++ template with one class",
-	"args": { 
-		"class" : null
-	}
+	"args": [
+		{
+			"name": "class"
+		}
+	]
 }
