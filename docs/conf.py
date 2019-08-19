@@ -3,6 +3,7 @@
 
 import templateme
 
+
 project = 'templateme'
 doc_title = "Templateme Documentation!"
 doc_author = "Rafal Kobel"
@@ -46,3 +47,4 @@ texinfo_documents = [
 
 epub_title = doc_title
 epub_exclude_files = ['search.html']
+

@@ -5,6 +5,7 @@ dist/
 venv/
 templateme.egg-info
 .ropeproject/
+.mypy_cache/
 *.swo
 *.swp
 *.swn

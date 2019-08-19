@@ -4,10 +4,15 @@ Module for template from path.
 """
 import os
 import logging
+from typing import List, TYPE_CHECKING
+
 import templateme
 from templateme.manifest import Manifest
 from templateme.manifest import ManifestError
-import templateme.containers.abstract
+from templateme.containers.abstract import Template, TMPElement
+
+if TYPE_CHECKING:
+    from templateme.manager import TMPManager  # pylint: disable=R0401
 
 
 class TemplateError(Exception):
@@ -17,12 +22,12 @@ class TemplateError(Exception):
 class PathElement(templateme.containers.abstract.TMPElement):
     """ Class with template's element file from path. """
 
-    def __init__(self, path, localization, template):
+    def __init__(self, path: str, localization: str, template: Template) -> None:
         templateme.containers.abstract.TMPElement.__init__(self, path, template)
         self.localization = localization
         self._load_txt = ""
 
-    def load_txt(self):
+    def load_txt(self) -> str:
         """ Load information from file. """
         if self._load_txt == "":
             with open(self.localization) as file_ob:
@@ -33,7 +38,12 @@ class PathElement(templateme.containers.abstract.TMPElement):
 class PathTemplate(templateme.containers.abstract.Template):
     """ Class with template from path. """
 
-    def __init__(self, path, name, manager):
+    def __init__(
+            self,
+            path: str,
+            name: str,
+            manager: 'TMPManager'
+    ) -> None:
         manifest = None
         try:
             manifest = Manifest.create_from_file(os.path.join(path, name, "manifest.json"), self)
@@ -46,8 +56,8 @@ class PathTemplate(templateme.containers.abstract.Template):
         templateme.containers.abstract.Template.__init__(self, name, manager, manifest)
         self._path = os.path.join(path, name)
 
-    def _get_elements(self):
-        elements = []
+    def _get_elements(self) -> List[TMPElement]:
+        elements: List[TMPElement] = []
         for root, _, files in os.walk(self._path):
             for name in files:
                 full_path = os.path.join(root, name)
@@ -62,14 +72,18 @@ class PathTemplate(templateme.containers.abstract.Template):
 class PathSource(templateme.containers.abstract.TMPSource):
     """ Class with path source from directory. """
 
-    def __init__(self, manager, path):
+    def __init__(
+            self,
+            manager: 'TMPManager',
+            path: str
+    ) -> None:
         templateme.containers.abstract.TMPSource.__init__(self, manager)
         self._path = path
 
-    def get_all_templates(self):
+    def get_all_templates(self) -> List[Template]:
         """ Return all templates from directory. """
         logging.debug("Path source, get_templates [%s]", self._path)
-        templates = []
+        templates: List[Template] = []
         logging.debug(self._path)
         templates_path = os.listdir(self._path)
         for temp_file in templates_path:

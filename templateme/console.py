@@ -28,13 +28,15 @@ import logging
 import sys
 from argparse import ArgumentParser
 from argparse import ArgumentTypeError
+from typing import Optional, Sequence, Any, List
+
 from templateme import get_version
 from templateme.manager import TMPManager
 from templateme.containers.abstract import Template
 from templateme.containers.abstract import TemplateError
 
 
-def __option_args(argv=None):
+def __option_args(argv: Optional[Sequence[str]] = None) -> Any:
     """
     Parsing argument for command line program.
 
@@ -42,7 +44,7 @@ def __option_args(argv=None):
     @type argv: list
     @return: parsed arguments
     """
-    def check_arguments(value):
+    def check_arguments(value: str) -> List[str]:
         """ Check if argument value looks ok. """
         valuelist = value.split("=")
         if len(valuelist) != 2:
@@ -85,7 +87,7 @@ def __option_args(argv=None):
     return parser.parse_args(argv)
 
 
-def print_template(template):
+def print_template(template: Template) -> None:
     """ Print information about template. """
     separator = "-----------------------"
     print("{sep}\nTemplate - {name}\n{sep}".format(sep=separator, name=template.name))
@@ -103,13 +105,15 @@ def print_template(template):
     print("\n{}".format(separator))
 
 
-def examine_save(template, project_name, force):
+def examine_save(template: Template, project_name: Optional[str], force: bool) -> None:
     """
     Check if template exists and you can save it.
     If not, ask about confirmation to do this.
     """
-    if force or project_name is None:
+    if force:
         return
+    if project_name is None:
+        project_name = template.name
     try:
         template.examine_save(project_name)
     except TemplateError:
@@ -124,12 +128,12 @@ def examine_save(template, project_name, force):
             raise
 
 
-def main(argv=None, debug=False):
+def main(argv: Optional[Sequence[str]] = None, debug: bool = False) -> None:
     """
     Main function for command line program.
 
     @param argv: Option parameters
-    @type argv: list
+    @param debug: True if in debug mode, False otherwise
     """
     options = __option_args(argv)
     logging.basicConfig(format='%(asctime)s - %(name)s - '
@@ -149,7 +153,8 @@ def main(argv=None, debug=False):
             sys.exit(0)
         else:
             template = manager.get_template(options.template)
-            print_template(template)
+            if template is not None:
+                print_template(template)
             sys.exit(0)
     elif options.template == "":
         print("You should define template's name\nSee --help for more information")

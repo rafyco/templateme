@@ -5,9 +5,15 @@ Module of template's manager.
 import os
 import logging
 import datetime
+from typing import List, Optional, TYPE_CHECKING
+
+from templateme.containers.abstract import TMPSource
 from templateme.containers.resource import ResourceSource
 from templateme.containers.path import PathSource
 from templateme.configuration import Configuration
+
+if TYPE_CHECKING:
+    from templateme.containers.abstract import Template  # pylint: disable=R0401
 
 
 class TMPManagerError(Exception):
@@ -17,14 +23,14 @@ class TMPManagerError(Exception):
 class TMPManager:
     """ Template manager. """
 
-    def __init__(self, name="Project", debug=False):
-        self.plugins = []
+    def __init__(self, name: str = "Project", debug: bool = False) -> None:
+        self.plugins: List[TMPSource] = []
         self.__config = Configuration(debug=debug)
 
         self.__register_sources()
         self.name = name
 
-    def __register_sources(self):
+    def __register_sources(self) -> None:
         """ Register all plugins needed by manager. """
         self.plugins.append(ResourceSource(manager=self, source_dir="templates"))
         if self.__config.debug:
@@ -38,7 +44,7 @@ class TMPManager:
                 path_source = PathSource(manager=self, path=template_path)
                 self.plugins.append(path_source)
 
-    def get_all_templates(self):
+    def get_all_templates(self) -> List['Template']:
         """ Return all of available templates from all of containers. """
         result = []
         for plug in self.plugins:
@@ -47,7 +53,10 @@ class TMPManager:
                 result.append(temp)
         return result
 
-    def get_template(self, name):
+    def get_template(
+            self,
+            name: str
+    ) -> Optional['Template']:
         """ Return template by name. """
         template = None
         for plug in self.plugins:
@@ -56,7 +65,11 @@ class TMPManager:
                 break
         return template
 
-    def render_template_txt(self, txt, template):
+    def render_template_txt(
+            self,
+            txt: str,
+            template: 'Template'
+    ) -> str:
         """ Rendering template to text format. """
         result = txt
         changes = {

@@ -19,8 +19,9 @@ def read_description(module_name):
             break
     return result
 
+
 CURRENT_PYTHON = sys.version_info[:2]
-REQUIRED_PYTHON = (3, 5)
+REQUIRED_PYTHON = (3, 6)
 
 if CURRENT_PYTHON < REQUIRED_PYTHON:
     sys.stderr.write("""
@@ -31,15 +32,16 @@ This version of Templateme requires Python {}.{}, but you're trying to
 install it on Python {}.{}.
 This may be because you are using a version of pip that doesn't
 understand the python_requires classifier. Make sure you
-have python 3.5 or newer, then try again:
+have python {}.{} or newer, then try again:
     $ python3 -m pip install --upgrade pip setuptools
     $ pip3 install templateme
-""".format(*(REQUIRED_PYTHON + CURRENT_PYTHON)))
+""".format(*(REQUIRED_PYTHON + CURRENT_PYTHON + REQUIRED_PYTHON)))
     sys.exit(1)
-    
+
 EXCLUDE_FROM_PACKAGES = ['templateme.templates']
 
 version = __import__('templateme').get_version()
+
 
 def package_data():
     result = []
@@ -47,7 +49,8 @@ def package_data():
         for name in files:
             full_path = os.path.join(root, name)
             result.append(full_path.replace("./templateme/", "./"))
-    return { 'templateme' : result }
+    return {'templateme': result}
+
 
 setup(
     name='templateme',
@@ -62,22 +65,25 @@ setup(
     include_package_data=True,
     package_dir={'templateme': 'templateme'},
     package_data=package_data(),
-    test_suite='templateme.tests.__main__',
+    test_suite='tests',
     classifiers=[
         'Environment :: Console',
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
         'Intended Audience :: Science/Research',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
         'License :: OSI Approved :: MIT License',
         'Topic :: Terminals'
     ],
     install_requires=[
-        'pylint',
-        'mock',
-        'pep8==1.7.1',
+    ],
+    tests_require=[
+        'pylint==2.3.1',
+        'mock==3.0.5',
+        'mypy==0.720',
+        'pycodestyle==2.5.0',
         'Sphinx==1.8.4'
     ],
     entry_points={

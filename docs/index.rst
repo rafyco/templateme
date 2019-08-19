@@ -25,5 +25,6 @@ programs.
     configuration
     creating
     distribution
-    code
     changelog
+    other_files
+    code

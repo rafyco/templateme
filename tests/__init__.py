@@ -12,8 +12,9 @@ import unittest
 import os
 import sys
 from io import StringIO
-import pep8
+import pycodestyle
 from pylint.lint import Run as run_pylint
+from mypy.main import main as mypy_run
 import templateme
 
 
@@ -41,11 +42,11 @@ class TestTemplateMeModule(unittest.TestCase):  # pylint: disable=R0904
             return result
         return recursive_checker(templateme.__path__[0])
 
-    def test_pep8(self):
-        """ Tests that we conform to PEP8. """
-        pep8_style = pep8.StyleGuide(paths=['--ignore=E501'])
+    def test_pycodestyle(self):
+        """ Tests that we conform to pystylecode. """
+        pycode_style = pycodestyle.StyleGuide(paths=['--ignore=E501'])
         # Disable E501 code (line too long). It should be enabled after fixed.
-        result = pep8_style.check_files(TestTemplateMeModule.__get_sources_file())
+        result = pycode_style.check_files(TestTemplateMeModule.__get_sources_file())
         self.assertEqual(result.total_errors, 0,
                          "Found code style errors (and warnings).")
 
@@ -68,6 +69,25 @@ class TestTemplateMeModule(unittest.TestCase):  # pylint: disable=R0904
         if status != 0 and output is not None:
             print(output.getvalue())
         self.assertEqual(status, 0, "[Pylint] Found code style errors"
+                                    " (and warnings).")
+
+    def test_mypy(self):
+        """ Test types. """
+        status = 0
+        try:
+            old_stdout = sys.stdout
+            old_stderr = sys.stderr
+            sys.stdout = output = StringIO()
+            sys.stderr = StringIO()
+            mypy_run(None, sys.stdout, sys.stderr, ["-p", "templateme", "--strict"])
+        except SystemExit as ex:
+            status = int(ex.code)
+        finally:
+            sys.stdout = old_stdout
+            sys.stderr = old_stderr
+        if status != 0 and output is not None:
+            print(output.getvalue())
+        self.assertEqual(status, 0, "[mypy] Found type errors"
                                     " (and warnings).")
 
 

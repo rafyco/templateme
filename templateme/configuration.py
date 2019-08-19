@@ -8,6 +8,7 @@ and all default option in TemplateMe.
 
 from configparser import ConfigParser
 import os
+from typing import List
 
 
 class Configuration:
@@ -25,10 +26,9 @@ license=MIT
 templates=
     """
 
-    def __init__(self, debug=False):
-        if debug:
-            config_files = []
-        else:
+    def __init__(self, debug: bool = False):
+        config_files: List[str] = []
+        if not debug:
             config_files = [
                 '/etc/templateme/config.ini',
                 '~/.config/templateme/config.ini',
@@ -51,7 +51,7 @@ templates=
 
         self.__debug = debug
 
-    def get_val(self, key, section="global", default=None):
+    def get_val(self, key: str, section: str = "global", default: str = "") -> str:
         """ Get value of option. """
         for config in reversed(self.__configurations):
             if section in config:
@@ -60,12 +60,12 @@ templates=
         return default
 
     @property
-    def debug(self):
+    def debug(self) -> bool:
         """ Check if configuration is from debug. """
         return self.__debug
 
     @property
-    def localizations(self):
+    def localizations(self) -> List[str]:
         """ Localization of all place where application should look for templates. """
         result = []
         locations = self.get_val("templates", default="")

@@ -12,7 +12,7 @@ module templateme
     :members:
 
 module templateme.arguments
--------------------------------
+---------------------------
 .. automodule:: templateme.arguments
     :members:
 
