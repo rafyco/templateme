@@ -37,7 +37,7 @@ To install TemplateMe from repository you can use pip program.
 
 ::
 
-    sudo pip3 install templateme
+    pip3 install templateme
 
 from sources
 ~~~~~~~~~~~~
@@ -48,7 +48,7 @@ command:
 
 ::
 
-    sudo python3 setup.py install
+    python3 setup.py install
 
 Usage
 -----
