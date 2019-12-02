@@ -7,8 +7,8 @@ Console programs to make new project in defined languages.
 .. image:: https://img.shields.io/badge/author-Rafa%C5%82%20Kobel-blue.svg
     :target: https://rafyco.pl
 
-.. image:: https://img.shields.io/travis/rafyco/templateme.svg?logo=travis
-   :target: https://travis-ci.org/rafyco/templateme
+.. image:: https://github.com/rafyco/templateme/actions
+   :target: https://github.com/actions/rafyco/templateme/workflows/Python%20package/badge.svg
 
 .. image:: https://img.shields.io/github/last-commit/rafyco/templateme.svg?logo=github
     :target: https://github.com/rafyco/templateme
@@ -37,7 +37,7 @@ To install TemplateMe from repository you can use pip program.
 
 ::
 
-    sudo pip3 install templateme
+    pip3 install templateme
 
 from sources
 ~~~~~~~~~~~~
@@ -48,7 +48,7 @@ command:
 
 ::
 
-    sudo python3 setup.py install
+    python3 setup.py install
 
 Usage
 -----
@@ -79,6 +79,15 @@ For more information about application please visit the documentation or try:
 
     templateme --help
 
+
+Unit test
+---------
+
+For testing module write:
+
+::
+
+    python3 setup.py test
 
 Author
 ------

@@ -25,6 +25,7 @@ build templates.
 """
 
 import logging
+import sys
 from argparse import ArgumentParser
 from argparse import ArgumentTypeError
 from templateme import get_version
@@ -145,20 +146,20 @@ def main(argv=None, debug=False):
                     print("{} ".format(temp))
                 else:
                     print(" * {} - {}".format(temp, temp.short_description))
-            exit(0)
+            sys.exit(0)
         else:
             template = manager.get_template(options.template)
             print_template(template)
-            exit(0)
+            sys.exit(0)
     elif options.template == "":
         print("You should define template's name\nSee --help for more information")
-        exit(1)
+        sys.exit(1)
 
     template = manager.get_template(options.template)
     assert isinstance(template, Template)
     if template is None:
         print("There are not template name: ", options.template)
-        exit(1)
+        sys.exit(1)
     force = options.force
     template.args.add_values_from_list(options.argvalues)
     try:
@@ -173,7 +174,7 @@ def main(argv=None, debug=False):
         template.save(options.project_name, options.project_name, force=force)
     except TemplateError as ex:
         print("Cannot save: ", ex)
-        exit(2)
+        sys.exit(2)
 
 
 if __name__ == "__main__":
