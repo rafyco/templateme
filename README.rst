@@ -7,8 +7,8 @@ Console programs to make new project in defined languages.
 .. image:: https://img.shields.io/badge/author-Rafa%C5%82%20Kobel-blue.svg
     :target: https://rafyco.pl
 
-.. image:: https://github.com/rafyco/templateme/actions
-   :target: https://github.com/actions/rafyco/templateme/workflows/Python%20package/badge.svg
+.. image:: https://github.com/rafyco/templateme/workflows/Python%20package/badge.svg
+    :target: https://github.com/rafyco/templateme/actions
 
 .. image:: https://img.shields.io/github/last-commit/rafyco/templateme.svg?logo=github
     :target: https://github.com/rafyco/templateme
