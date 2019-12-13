@@ -27,7 +27,9 @@ jobs:
     - name: Test with pytest
       run: python setup.py test
     - name: Build documentation
-      run: python setup.py build_sphinx
+      run: |
+        pip install .[documentation]
+        python setup.py build_sphinx
     - name: Run console program
       run: |
         python -m templateme.console --version
