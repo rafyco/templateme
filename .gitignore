@@ -11,3 +11,5 @@ templateme.egg-info
 *.swn
 .eggs
 .idea
+.tox/
+.theia/

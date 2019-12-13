@@ -51,6 +51,12 @@ def package_data():
             result.append(full_path.replace("./templateme/", "./"))
     return {'templateme': result}
 
+tests_req=[
+        'pylint==2.3.1',
+        'mock==3.0.5',
+        'mypy==0.720',
+        'pycodestyle==2.5.0'
+    ]
 
 setup(
     name='templateme',
@@ -79,13 +85,11 @@ setup(
     ],
     install_requires=[
     ],
-    tests_require=[
-        'pylint==2.3.1',
-        'mock==3.0.5',
-        'mypy==0.720',
-        'pycodestyle==2.5.0',
-        'Sphinx==1.8.4'
-    ],
+    tests_require=tests_req,
+    extras_require={
+        'documentation': [ 'Sphinx==1.8.4' ],
+        'toxtests': tests_req
+    },
     entry_points={
         'console_scripts': [
             'templateme = templateme.console:main',

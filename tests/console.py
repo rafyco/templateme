@@ -16,19 +16,19 @@ from templateme.console import main as console_program
 class TestConsoleModule(unittest.TestCase):  # pylint: disable=R0904
     """ Module testsCase. """
 
-    def setUp(self):
+    def setUp(self) -> None:
         """ Setup environment. """
         self.old_stdout = sys.stdout
         self.old_stderr = sys.stderr
         sys.stdout = self.tmp_stdout = StringIO()
         sys.stderr = StringIO()
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """ Teardown environment. """
         sys.stdout = self.old_stdout
         sys.stderr = self.old_stderr
 
-    def test_console(self):
+    def test_console(self) -> None:
         """ Test that console app work ok. """
         status = 0
         try:
@@ -39,7 +39,7 @@ class TestConsoleModule(unittest.TestCase):  # pylint: disable=R0904
         self.assertEqual(status, 0)
         self.assertNotEqual(self.tmp_stdout.getvalue(), "")
 
-    def test_invalid_args(self):
+    def test_invalid_args(self) -> None:
         """ Test invalid arguments. """
         status = 0
         try:
@@ -50,7 +50,7 @@ class TestConsoleModule(unittest.TestCase):  # pylint: disable=R0904
         self.assertEqual(self.tmp_stdout.getvalue(), "")
         self.assertNotEqual(status, 0)
 
-    def test_version(self):
+    def test_version(self) -> None:
         """ Test invalid arguments. """
         status = 0
         try:
@@ -62,7 +62,7 @@ class TestConsoleModule(unittest.TestCase):  # pylint: disable=R0904
         self.assertEqual(self.tmp_stdout.getvalue().strip(),
                          "templateme {}".format(templateme.get_version()))
 
-    def test_listing(self):
+    def test_listing(self) -> None:
         """ Testing list of default templates. """
         status = 0
         try:
@@ -72,7 +72,7 @@ class TestConsoleModule(unittest.TestCase):  # pylint: disable=R0904
                 status = ex.code  # pylint disable=E0012, R0204
         self.assertEqual(status, 0)
 
-    def test_create_template(self):
+    def test_create_template(self) -> None:
         """ Test if template works. """
         str_check = 'SomeStringTakePlaceInCode'
         status = 0
@@ -85,7 +85,7 @@ class TestConsoleModule(unittest.TestCase):  # pylint: disable=R0904
         self.assertEqual(status, 0)
         self.assertTrue(self.tmp_stdout.getvalue().find(str_check) > -1)
 
-    def test_create_with_arguments(self):
+    def test_create_with_arguments(self) -> None:
         """ Test if argument arg works. """
         str_check = 'SomeStringTakePlaceInCode'
         status = 0
@@ -108,7 +108,7 @@ class TestConsoleModule(unittest.TestCase):  # pylint: disable=R0904
             self.assertEqual(status, 2, "Invalid argument test result:({}=2), checked arg [{}]"
                              "".format(status, invalid_arg))
 
-    def test_create_template_quiet(self):
+    def test_create_template_quiet(self) -> None:
         """ Test if template realy not ask in quiet mode. """
         status = 0
         try:
