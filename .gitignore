@@ -13,3 +13,5 @@ templateme.egg-info
 .idea
 .tox/
 .theia/
+docs/
+.gitpod.yml

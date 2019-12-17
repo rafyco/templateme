@@ -28,6 +28,7 @@ jobs:
       run: python setup.py test
     - name: Build documentation
       run: |
+        python setup.py install
         pip install .[documentation]
         python setup.py build_sphinx
     - name: Run console program
